@@ -1,0 +1,64 @@
+﻿@model Rosseti.ViewModels.IndexVievModel
+
+    <div class="row">
+        <div class="col-4">
+            <div class="card p-3">
+                <h4>Нормальное состояние</h4>
+                <table class="table table-striped table-sm">
+                    <thead>
+                        <tr>
+                            <th>Мин. значение</th>
+                            <th>Макс. значение</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.rightOscillogramsSteps)
+                        {
+                            <tr>
+                                <td>
+                                    @item.MinValue
+                                </td>
+                                <td>
+                                    @item.MaxValue
+                                </td>
+
+
+                            </tr>
+                        }
+                    </tbody>
+
+
+
+                </table>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card p-3">
+                <h4>Полученные осциллограммы</h4>
+
+                                    <ul class="nav nav-pills nav-stacked">
+                                        @foreach (var item in Model.DateOscillograms)
+                                        {
+                                            <li style="width:100%"><a href="#" onclick="GetChartsData('@item.Id')" data-value="@item.Id">@item.Time</a></li>
+
+                                        }
+                                    </ul>
+
+            </div>
+        </div>
+        <div class="col-4">
+
+            <div class="card p-3">
+                <h4>Список ошибок</h4>
+
+                <ul class="nav nav-pills nav-stacked">
+                    @foreach (var item in Model.SprErrors)
+                    {
+                        <li style="width:100%"><a href="#" onclick="GetChartsDataForError('@item.Id')" data-value="@item.Id">@item.Name</a></li>
+
+                    }
+                </ul>
+
+            </div>
+        </div>
+    </div>

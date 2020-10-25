@@ -1,0 +1,206 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+
+<input type="hidden" id="sprOscillId" />
+<input type="hidden" id="dataOscillId" />
+<div class="row">
+    <div class="col-3" id="oscillogramContainer">
+
+    </div>
+    <div class="col-9" id="normalizeContainer">
+
+    </div>
+
+</div>
+
+<div class="container" id="diagramsContainer">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    
+                </div>
+                <div class="panel-body">
+                    <div id="chart1"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-8 d-none" id="divGetError" >
+            Извлечь ошибку
+            <div class="row">
+                <div class="col-6">
+                    <input type="text" id="errorName" placeholder="Наименование" class="form-control" />
+                </div>
+                <div class="col-2">
+                <input type="number" id="startIndex" placeholder="от" class="form-control" max="0" />
+                </div>
+                <div class="col-2">
+                <input type="number" id="endIndex" placeholder="до" class="form-control" min="1000" />
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-info" onclick="SaveErrors()">Сохранить</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+@section Scripts
+{
+    <link href="~/lib/jquery-charts/all.min.css" rel="stylesheet" />
+    <script src="~/lib/jquery-charts/shieldui-all.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: "/Home/TableOscillogram",
+                
+                method: "GET",
+                success: function (data) {
+                    $("#oscillogramContainer").html(data);
+                }
+            })
+        });
+        function GetNormalize(id) {
+
+            $("#divGetError").addClass("d-none");
+
+
+            $("#sprOscillId").val(id);
+            $.ajax({
+                url: "/Home/TableNormalize",
+               
+                method: "GET",
+                data: { id: id },
+                success: function (data) {
+                    $("#normalizeContainer").html(data);
+                }
+            })
+        }
+        function GetOscillogram(id) {
+           
+            $.ajax({
+                url: "/Home/TableReceivedOscillograms",
+               
+                method: "GET",
+                data: { id: id },
+                success: function (data) {
+                    $("#receivedOscillogramsContainer").html(data);
+                }
+            })
+        }
+        function SaveErrors() {
+            $("#divGetError").addClass("d-none");
+            var startIndex = $("#startIndex").val();
+            var endIndex = $("#endIndex").val();
+            var errorName = $("#errorName").val();
+            var sprOscillId = $("#sprOscillId").val();
+            var dataOscillId = $("#dataOscillId").val();
+            $.ajax({
+                url: "/Home/AddError",
+                
+                method: "POST",
+                data: { startIndex, endIndex, errorName, sprOscillId, dataOscillId },
+                success: function (data) {
+                    console.log(data);
+                }
+            })
+        }
+
+        let dataMinVal;
+        let dataMaxVal;
+        let dataVal;
+        function GetChartsData(id) {
+             $("#divGetError").removeClass("d-none");
+            $("#dataOscillId").val(id);
+            $.ajax({
+                url: "/Home/ChartsData",
+                method: "GET",
+                data: { id: id },
+                success: function (data) {
+                    dataMinVal = data.dataMin;
+                    dataMaxVal = data.dataMax;
+                    dataVal = data.dataVal;
+                    SetChartsData(data.dataMin, data.dataMax, data.dataVal)
+                }
+            });
+        }
+        function GetChartsDataForError(id) {
+            $("#divGetError").addClass("d-none");
+            $.ajax({
+                url: "/Home/ChartsDataError",
+                method: "GET",
+                data: { id: id },
+                success: function (data) {
+                    SetChartsDataError(data)
+                }
+            });
+        }
+
+
+        function SetChartsDataError(data1) {
+            console.log(data1);
+            $("#chart1").shieldChart({
+                exportOptions: {
+                    image: false,
+                    print: false
+                },
+                axisY: {
+                    title: {
+                        text: "Визуальная демонстрация осциллограмм ошибок"
+                    }
+                },
+                dataSeries: [{
+                    seriesType: "line",
+                    data: data1
+                }]
+            });
+        }
+        function SetChartsData(data1, data2, data3) {
+
+            $("#chart1").shieldChart({
+                exportOptions: {
+                    image: false,
+                    print: false
+                },
+                axisY: {
+                    title: {
+                        text: "Визуальная демонстрация осциллограмм"
+                    }
+                },
+                dataSeries: [{
+                    seriesType: "line",
+                    data: data1
+                }, {
+                    seriesType: "line",
+                    data: data2
+                }, {
+                    seriesType: "line",
+                    data: data3
+                }]
+            });
+        }
+                //var colors = ['#007bff', '#28a745', '#333333', '#c3e6cb', '#dc3545', '#6c757d'];
+
+                ///* large line chart */
+                //var chLine = document.getElementById("chLine");
+                //var chartData = {
+                //    labels: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+                //    datasets: [{
+                //        data: [-45.11, 127.56, 239.57, 279.24, 196.79, 44.34, -126.01, -241.12, -280.01, -196.01],
+                //        backgroundColor: 'transparent',
+                //        borderColor: colors[0],
+                //        borderWidth: 4,
+                //        pointBackgroundColor: colors[0]
+                //    }]
+                //};
+
+
+    </script>
+}

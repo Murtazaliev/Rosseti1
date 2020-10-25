@@ -1,0 +1,11 @@
+﻿@model IEnumerable<SprOscillograms>
+    <div class="card p-3">
+        <h4>Список осциллограмм</h4>
+        <ul class="nav nav-pills nav-stacked">
+            @foreach (var item in Model)
+            {
+                <li style="width:100%"><a href="#" onclick="GetNormalize('@item.Id')" data-value="@item.Id">@item.Name</a></li>
+
+            }
+        </ul>
+    </div>

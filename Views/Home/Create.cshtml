@@ -1,0 +1,89 @@
+﻿<form id="example-basic">
+    <h3>Осцеллограмма</h3>
+    <section>
+        <div class="row">
+            <div class="col-6">
+                Наименование
+                <input name="name" type="text" class="form-control" required  />
+            </div>
+            <div class="col-3">
+                Шаг
+                <input id="step" name="step" type="number" class="form-control" required />
+            </div>
+        </div>
+    </section>
+    <h3>Шаг</h3>
+    <section class="overflow-auto">
+        <div class="row">
+            <div class="col-6">
+                <div id="values-container" class="row">
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+</form>
+
+    @section Scripts
+{
+        <script>
+            $("#example-basic").steps({
+                headerTag: "h3",
+                bodyTag: "section",
+                transitionEffect: "slideLeft",
+                autoFocus: true,
+                onStepChanging: function (event, currentIndex, newIndex) {
+                   
+                    
+                    
+                    if (currentIndex == 0) {
+                        AddInputsValues();
+                    }
+                    return true;
+                },
+                onStepChanged: function (event, currentIndex, priorIndex) { },
+                onFinishing: function (event, currentIndex) { SaveOscelogramValues(); return true; },
+                onFinished: function (event, currentIndex) { },
+            });
+
+            let index;
+            
+            function SaveOscelogramValues() {
+                Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Осциллограма сохранена',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                $.ajax({
+                    url: "/Home/Create",
+                    data: $("form").serialize(),
+                    method: "POST",
+                    success: function () {
+                        
+                        setInterval(window.location.reload(), 3000);
+                    }
+                })
+            }
+            function AddInputsValues() {
+                var step = $("#step").val();
+                    $("#values-container").empty();
+                for (index = 0; index < step; index++) {
+                    $("#values-container").append(`
+                <div class="col-2">${index + 1}</div>
+                <div class="col-5">
+                Мин.
+                <input type="text" class="form-control" name="minVal" required  />
+                </div>
+                <div class="col-5">
+                Макс.
+                <input type="text" class="form-control" name="maxVal" required  />
+            </div>`)
+                }
+            }
+
+
+        </script>
+    }

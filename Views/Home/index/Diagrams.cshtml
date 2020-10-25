@@ -1,0 +1,36 @@
+﻿
+
+    <div class="container">
+        <div class="row my-3">
+            <div class="col">
+                <h4>Bootstrap 4 Chart.js</h4>
+            </div>
+        </div>
+        <div class="row my-2">
+            <div class="col-md-6 py-1">
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="chLine"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+<script>
+    var colors = ['#007bff','#28a745','#333333','#c3e6cb','#dc3545','#6c757d'];
+
+/* large line chart */
+var chLine = document.getElementById("chLine");
+var chartData = {
+  labels: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+  datasets: [{
+    data: [-45.11, 127.56, 239.57, 279.24, 196.79, 44.34, -126.01, -241.12, -280.01, -196.01],
+    backgroundColor: 'transparent',
+    borderColor: colors[0],
+    borderWidth: 4,
+    pointBackgroundColor: colors[0]
+  }  ]
+};
+</script>
